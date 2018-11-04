@@ -1,5 +1,4 @@
 import Controller from '@ember/controller';
-import Song from 'rarwe/models/band';
 import { empty } from '@ember/object/computed';
 
 
@@ -16,10 +15,13 @@ export default Controller.extend({
     cancelAddSong() {
       this.set('isAddingSong', false);
     },
-    saveSong(event) {
+    async saveSong(event) {
       event.preventDefault();
-      let newSong = Song.create({ name: this.newSongTitle });
-      this.model.pushObject(newSong);
+      let newSong = this.get('store').createRecord('song', {
+        title: this.get('newSongTitle'),
+        band: this.model
+      });
+      await newSong.save();
       this.set('newSongTitle', '');
     },
     updateRating(song, rating) {
